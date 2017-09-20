@@ -12,15 +12,24 @@ class nave {
         this.img2 = loadImage("includes/aviao2.png"); 
     }
 
+    update() {
+        angleMode(DEGREES);
+        var speedY = this.speed * cos(this.heading);
+        var speedX = this.speed * sin(this.heading);
+
+        var dist1Lon = calcGeoDistance(this.latitude, this.longitude, this.latitude, this.longitude+1, 'km')*1000;
+        var dist1Lat = calcGeoDistance(this.latitude, this.longitude, this.latitude+1, this.longitude, 'km')*1000;
+
+        var speedLat = (speedY / dist1Lat) / frameRate();
+        var speedLon = (speedX / dist1Lon) / frameRate();
+
+        this.latitude = this.latitude + speedLat;
+        this.longitude = this.longitude + speedLon;
+    }
+
     show(){
         var pos = myMap.latLngToPixel(this.latitude, this.longitude);
-        // image(this.img, pos.x, pos.y, this.img.width/10, this.img.height/10);
-        // Draw a triangle rotated in the direction of velocity
-        // angleMode(DEGREES);
-        // imageMode(CENTER);
         var angle = float(this.heading);
-
-        //clear();
 
         push();
         translate(pos.x, pos.y);
