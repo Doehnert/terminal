@@ -1,5 +1,3 @@
-var vehicles = [];
-var avioes = [];
 var url = 'https://opensky-network.org/api/states/all';
 
 // Options for map
@@ -13,21 +11,34 @@ var options = {
 // Create an instance of Leaflet
 var mappa = new Mappa('Leaflet');
 var myMap;
-
 var canvas;
-
 var recordSpeed = 0;
 var recordAviao;
-
-//var xhr;
 var raioTerminal = 74.08;
-//var obj;
-var myArr;
-var xmlhttp;
-
 var tma1 = [];
-var hit = false;
+var avioes = [];
 
+
+function checkDanger(){
+  for(var i=0;i<avioes.length;i++) {
+    var avi = avioes[i];
+    for(var j=0;j<avioes.length;j++) {
+      if (i==j) {
+        continue;
+      } else {
+        avi2 = avioes[j];
+        var dist = calcGeoDistance(avi.latitude, avi.longitude, avi2.latitude, avi2.longitude, 'km');
+        if(dist < 10) {
+          var pos1 = myMap.latLngToPixel(avi.latitude, avi.longitude);
+          var pos2 = myMap.latLngToPixel(avi2.latitude, avi2.longitude);
+          stroke(0);
+          strokeWeight(1);
+          line(pos1.x, pos1.y, pos2.x, pos2.y);
+        }
+      }
+    }
+  }
+}
 
 function converteCoordenadas(graus,minutos,segundos) {
   var decimais = graus + minutos/60 + segundos/3600;
@@ -46,7 +57,7 @@ function setup() {
   myMap = mappa.tileMap(options);
   myMap.overlay(canvas);
 
-  setInterval(reler, 5000);
+  setInterval(reler, 20000);
 
   // Load the data
   //meteorites = loadTable('../../data/Meteorite_Landings.csv', 'csv', 'header');
@@ -76,14 +87,16 @@ function gotData(json){
             var callsign = aviao[1];
             var heading = aviao[10];
             var speed = aviao[9];
+            var altitude = aviao[7];
+            var vertical_rate = aviao[11];
 
             //verifica se esta na terminal
             var pos = myMap.latLngToPixel(latitude, longitude);
             if ( collidePointPoly(pos.x,pos.y,tma1) ) {
             //if (distance < raioTerminal) {
-              var meuaviao = new nave(latitude, longitude, callsign, heading, true, speed);
+              var meuaviao = new nave(latitude, longitude, callsign, heading, true, speed, altitude, vertical_rate);
             }else{
-              var meuaviao = new nave(latitude, longitude, callsign, heading, false, speed);
+              var meuaviao = new nave(latitude, longitude, callsign, heading, false, speed, altitude, vertical_rate);
             }
             avioes.push(meuaviao);
           }
@@ -94,11 +107,17 @@ function gotData(json){
 
 // The draw loop is fully functional but we are not using it for now.
 function draw() {
+
+  //console.log(frameRate());
   
   clear();
   for (var i=0;i<avioes.length;i++) {
+    avioes[i].update();
     avioes[i].show();
   }
+
+  checkDanger();
+
   var posSBCT = myMap.latLngToPixel(-25.5316666667, -49.1761111111);
   var v1 = createVector(posSBCT.x, posSBCT.y);
 
@@ -108,6 +127,8 @@ function draw() {
   //var raio = p5.Vector.dist(v1, v2);
 
   fill(204, 102, 0, 30);
+  noStroke();
+
 	beginShape();
 	for(i=0; i < tma1.length; i++){
 		vertex(tma1[i].x,tma1[i].y);
@@ -115,7 +136,7 @@ function draw() {
 	endShape(CLOSE);
 
   fill(70, 203,31);	
-  stroke(100);
+  //stroke(100);
    
   var lat = converteCoordenadas(-25, -42, -33);
   var lon = converteCoordenadas(-50, -02, -01);
@@ -308,6 +329,6 @@ function print_info() {
 
   
   if(recordAviao){
-    vel.html(recordSpeed+' Km/h - '+recordAviao.callsign, true);
+    vel.html(recordSpeed*3.6+' Km/h - '+recordAviao.callsign, true);
   }
 }

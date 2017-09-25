@@ -1,18 +1,29 @@
 class nave {
-    constructor(latitude, longitude, callsign, heading, terminal, speed){
+    constructor(latitude, longitude, callsign, heading, terminal, speed, altitude, vertical_rate){
         this.latitude = latitude;
         this.longitude = longitude;
         this.callsign = callsign;
         this.heading = heading;
         this.terminal = terminal;
         this.speed = speed;
+        this.altitude = altitude;
+        this.vertical_rate = vertical_rate;
+        this.r = 4;
+
 
         this.size = 20;
-        this.img = loadImage("includes/aviao.png"); 
-        this.img2 = loadImage("includes/aviao2.png"); 
+        //this.img = loadImage("includes/aviao.png"); 
+        //this.img2 = loadImage("includes/aviao2.png");
     }
 
     update() {
+
+        this.altitude += this.vertical_rate/frameRate();
+        
+        this.red = map(this.altitude, 0, 13000, 0, 255);
+        this.green = 0;
+        this.blue = map(this.altitude, 0, 13000, 255, 0);
+        
         angleMode(DEGREES);
         var speedY = this.speed * cos(this.heading);
         var speedX = this.speed * sin(this.heading);
@@ -29,20 +40,36 @@ class nave {
 
     show(){
         var pos = myMap.latLngToPixel(this.latitude, this.longitude);
+        // image(this.img, pos.x, pos.y, this.img.width/10, this.img.height/10);
+        // Draw a triangle rotated in the direction of velocity
+        // angleMode(DEGREES);
+        // imageMode(CENTER);
         var angle = float(this.heading);
+
+        //clear();
 
         push();
         translate(pos.x, pos.y);
         noStroke();
         fill('black');
-        text(this.callsign, 0, 0);
+        text(this.callsign, 0, -10);
+        text(this.altitude, 0, 0);
+        text(this.speed, 0, 10);
+        //text(this.speed + ' - '+this.heading,0,0);
         rotate(angle);
 
-        if(this.terminal == false){
-            image(this.img, 0, 0, this.img.width/10, this.img.height/10);
-        } else{
-            image(this.img2, 0, 0, this.img2.width/10, this.img2.height/10);
-        }
+        fill(this.red, this.green, this.blue);
+        beginShape();
+        vertex(0, -this.r * 2);
+        vertex(-this.r, this.r * 2);
+        vertex(this.r, this.r * 2);
+        endShape(CLOSE);
+
+        // if(this.terminal == false){
+        //     image(this.img, 0, 0, this.img.width/10, this.img.height/10);
+        // } else{
+        //     image(this.img2, 0, 0, this.img2.width/10, this.img2.height/10);
+        // }
         pop();
     }
 }
