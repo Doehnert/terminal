@@ -1,2 +1,4 @@
 # terminal
-Terminal SBWT em tempo real
+SBCT terminal
+
+* Live view in: https://doehnert.github.io/terminal/index.html
