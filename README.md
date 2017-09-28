@@ -1,15 +1,26 @@
 # Terminal
-SBCT terminal
 
-* Live view in: https://doehnert.github.io/terminal/index.html
+SBCT Terminal in real time
 
-# This project show the aproach area terminal of the SBCT
+## Getting Started
 
-# Resources used in the project
+You can view the live project in: https://doehnert.github.io/terminal/index.html
 
-* https://p5js.org
-* p5.collide2d
-* p5.geolocation
-* https://github.com/cvalenzuela/Mappa
-* http://leafletjs.com/
-* http://opensky-network.org/
+### Prerequisites
+
+You will need to install a webserver to host the project
+
+## Built With
+
+* [P5.js](https://p5js.org) - Javascript Library
+* [Mappa](https://github.com/cvalenzuela/Mappa) - library to facilitate work between the <canvas> element and existing map libraries and APIs.
+* [Leaflet](http://leafletjs.com/) - JavaScript library for mobile-friendly interactive maps. 
+* [OpenSky Network API](https://opensky-network.org/apidoc/) - Unfiltered, real-time air traffic tracking information
+
+## Authors
+
+* **Elton Doehnert** - https://github.com/Doehnert
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
